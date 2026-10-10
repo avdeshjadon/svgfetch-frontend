@@ -1,6 +1,12 @@
 <div align="center">
 
-  <img src="public/full_logo.svg" alt="svgfetch Logo" width="340" />
+  <a href="https://github.com/avdeshjadon/svgfetch-frontend">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/avdeshjadon/svgfetch-frontend/main/public/full_logo_dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/avdeshjadon/svgfetch-frontend/main/public/full_logo.svg">
+      <img src="https://raw.githubusercontent.com/avdeshjadon/svgfetch-frontend/main/public/full_logo.svg" alt="svgfetch Logo" width="380" />
+    </picture>
+  </a>
 
   <p><strong>⚡ Official web app, interactive logo playground & docs for <a href="https://github.com/avdeshjadon/svgfetch">svgfetch</a></strong></p>
 
