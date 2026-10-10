@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Search, Copy, Check, Download, X, ExternalLink, Code, ArrowLeft } from 'lucide-react'
+import { Search, Copy, Check, Download, X, ExternalLink, Code, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
 import { LIBRARY_STATS } from '../data/siteData'
 import Reveal from './Reveal'
 
@@ -12,7 +12,7 @@ export default function LogoLibrary({ onBack }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
-  const [visible, setVisible] = useState(PAGE_SIZE)
+  const [currentPage, setCurrentPage] = useState(1)
   const [copied, setCopied] = useState('')
   const [active, setActive] = useState(null)
   const [activeCode, setActiveCode] = useState('')
@@ -67,7 +67,32 @@ export default function LogoLibrary({ onBack }) {
     )
   }, [items, query])
 
-  const shown = filtered.slice(0, visible)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const validCurrentPage = Math.min(Math.max(1, currentPage), totalPages)
+  const startIndex = (validCurrentPage - 1) * PAGE_SIZE
+  const shown = filtered.slice(startIndex, startIndex + PAGE_SIZE)
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages || page === validCurrentPage) return
+    setCurrentPage(page)
+    const target = document.getElementById('library')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  const getPaginationRange = (current, total) => {
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1)
+    }
+    if (current <= 4) {
+      return [1, 2, 3, 4, 5, '...', total]
+    }
+    if (current >= total - 3) {
+      return [1, '...', total - 4, total - 3, total - 2, total - 1, total]
+    }
+    return [1, '...', current - 1, current, current + 1, '...', total]
+  }
 
   const copyCode = async (it) => {
     try {
@@ -151,11 +176,11 @@ export default function LogoLibrary({ onBack }) {
               <input
                 className="search-input"
                 type="search"
-                placeholder="Search 1,900+ brands by name or file…"
+                placeholder="Search brand by name..."
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value)
-                  setVisible(PAGE_SIZE)
+                  setCurrentPage(1)
                 }}
                 aria-label="Search logos"
               />
@@ -164,7 +189,7 @@ export default function LogoLibrary({ onBack }) {
                   className="search-clear"
                   onClick={() => {
                     setQuery('')
-                    setVisible(PAGE_SIZE)
+                    setCurrentPage(1)
                   }}
                   aria-label="Clear search"
                 >
@@ -172,10 +197,6 @@ export default function LogoLibrary({ onBack }) {
                 </button>
               )}
             </div>
-
-            <span className="lib-count">
-              {loading ? 'Loading…' : `${filtered.length.toLocaleString()} results`}
-            </span>
           </div>
         </Reveal>
 
@@ -190,7 +211,10 @@ export default function LogoLibrary({ onBack }) {
             <p>No logos found matching “{query}”.</p>
             <button
               className="btn btn-ghost"
-              onClick={() => setQuery('')}
+              onClick={() => {
+                setQuery('')
+                setCurrentPage(1)
+              }}
               style={{ marginTop: 14 }}
             >
               Clear search
@@ -250,17 +274,53 @@ export default function LogoLibrary({ onBack }) {
               })}
             </div>
 
-            {visible < filtered.length && (
-              <div className="lib-more">
-                <button
-                  className="btn btn-primary"
-                  onClick={() => setVisible((v) => v + PAGE_SIZE)}
-                >
-                  Load {Math.min(PAGE_SIZE, filtered.length - visible)} more
-                </button>
-                <span className="lib-more-info">
-                  Showing {shown.length.toLocaleString()} of {filtered.length.toLocaleString()}
-                </span>
+            {totalPages > 1 && (
+              <div className="lib-pagination-wrap">
+                <nav className="lib-pagination" aria-label="Pagination Navigation">
+                  <button
+                    className="page-nav-btn"
+                    disabled={validCurrentPage === 1}
+                    onClick={() => handlePageChange(validCurrentPage - 1)}
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft size={16} />
+                    <span>Prev</span>
+                  </button>
+
+                  <div className="page-numbers">
+                    {getPaginationRange(validCurrentPage, totalPages).map((p, idx) =>
+                      p === '...' ? (
+                        <span key={`ellipsis-${idx}`} className="page-ellipsis" aria-hidden="true">
+                          …
+                        </span>
+                      ) : (
+                        <button
+                          key={p}
+                          className={`page-num-btn ${validCurrentPage === p ? 'active' : ''}`}
+                          onClick={() => handlePageChange(p)}
+                          aria-label={`Page ${p}`}
+                          aria-current={validCurrentPage === p ? 'page' : undefined}
+                        >
+                          {p}
+                        </button>
+                      )
+                    )}
+                  </div>
+
+                  <button
+                    className="page-nav-btn"
+                    disabled={validCurrentPage === totalPages}
+                    onClick={() => handlePageChange(validCurrentPage + 1)}
+                    aria-label="Next page"
+                  >
+                    <span>Next</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </nav>
+
+                <div className="lib-pagination-info">
+                  Page {validCurrentPage} of {totalPages}
+                </div>
               </div>
             )}
           </>
