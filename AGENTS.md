@@ -1,8 +1,8 @@
 # AI Agent Operating Guidelines: svgfetch-frontend
 
 > **CRITICAL INSTRUCTION**: This repository (`svgfetch-frontend`) is the official discovery web application for:
-> 1. `svg-fetch` (Rust CLI core at `/Users/avdeshjadon/svg-fetch`)
-> 2. `svgfetch-icons` (Asset CDN repository at `/Users/avdeshjadon/svgfetch-icons`)
+> 1. `svg-fetch` (Rust CLI core at sibling directory `../svg-fetch`)
+> 2. `svgfetch-icons` (Asset CDN repository at sibling directory `../svgfetch-icons`)
 >
 > You MUST read [`ECOSYSTEM.md`](ECOSYSTEM.md) before making changes.
 
