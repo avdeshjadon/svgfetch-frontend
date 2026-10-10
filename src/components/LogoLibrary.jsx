@@ -247,7 +247,7 @@ export default function LogoLibrary({ onBack }) {
         </div>
 
         <Reveal delay={150}>
-          <div className="lib-stats-strip">
+          <div className="lib-stats">
             {stats.map((s) => (
               <div className="lib-stat" key={s.label}>
                 <div className="lib-stat-value">
@@ -263,7 +263,7 @@ export default function LogoLibrary({ onBack }) {
         <Reveal delay={200}>
           <div className="lib-toolbar">
             <div className="search-wrap">
-              <Search size={16} className="search-ico" />
+              <Search size={18} className="search-ico" />
               <input
                 className="search-input"
                 type="search"
@@ -284,9 +284,25 @@ export default function LogoLibrary({ onBack }) {
                   }}
                   aria-label="Clear search"
                 >
-                  <X size={14} />
+                  <X size={15} />
                 </button>
               )}
+            </div>
+
+            <div className="search-tags">
+              <span className="search-tags-label">Popular:</span>
+              {['Amazon', 'Myntra', 'Zomato', 'Google', 'Microsoft', 'Docker', 'React', 'Rust'].map((tag) => (
+                <button
+                  key={tag}
+                  className={`search-tag-chip ${query.toLowerCase() === tag.toLowerCase() ? 'active' : ''}`}
+                  onClick={() => {
+                    setQuery(query.toLowerCase() === tag.toLowerCase() ? '' : tag)
+                    setCurrentPage(1)
+                  }}
+                >
+                  {tag}
+                </button>
+              ))}
             </div>
           </div>
         </Reveal>
