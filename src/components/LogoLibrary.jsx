@@ -1,12 +1,26 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Copy, Check, Download, X, ExternalLink, Code, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
-import { LIBRARY_STATS } from '../data/siteData'
 import Reveal from './Reveal'
 
 const PAGE_SIZE = 60
 
 const CDN_BASE_URL = "https://cdn.jsdelivr.net/gh/avdeshjadon/svgfetch-icons@main"
+const RAW_BASE_URL = "https://raw.githubusercontent.com/avdeshjadon/svgfetch-icons/main"
 const fileUrl = (file) => `${CDN_BASE_URL}/logos/${file.split("/").map(encodeURIComponent).join("/")}`
+const rawFileUrl = (file) => `${RAW_BASE_URL}/logos/${file.split("/").map(encodeURIComponent).join("/")}`
+
+// Aliases and synonym mappings for brand search
+const ALIAS_MAP = {
+  amazon: ['aws', 'amzn', 'dynamodb', 'ec2', 's3', 'lambda', 'elastic', 'chime'],
+  aws: ['amazon', 'cloud'],
+  google: ['youtube', 'android', 'alphabet', 'chrome', 'gmail', 'gcp'],
+  facebook: ['meta', 'instagram', 'whatsapp', 'messenger'],
+  meta: ['facebook', 'instagram', 'whatsapp'],
+  microsoft: ['windows', 'azure', 'vscode', 'office', 'github', 'xbox'],
+  ecommerce: ['e-commerce', 'shop', 'store', 'cart', 'retail', 'myntra', 'meesho', 'flipkart'],
+  shop: ['e-commerce', 'ecommerce', 'store', 'cart', 'shopify'],
+  food: ['zomato', 'swiggy', 'delivery', 'eats'],
+}
 
 export default function LogoLibrary({ onBack }) {
   const [items, setItems] = useState([])
@@ -20,30 +34,66 @@ export default function LogoLibrary({ onBack }) {
 
   useEffect(() => {
     let alive = true
-    fetch(`${CDN_BASE_URL}/manifest.json`)
-      .then((res) => res.json())
-      .then((data) => {
-        const flat = []
-        for (const entry of data) {
-          const files = entry.files && entry.files.length ? entry.files : []
-          for (const file of files) {
-            flat.push({
-              name: entry.name || entry.shortname || file.replace(/\.svg$/i, ''),
-              shortname: entry.shortname || '',
-              url: entry.url || '',
-              file,
-            })
-          }
+
+    const loadManifest = async () => {
+      let data = null
+
+      // 1. Try real-time GitHub raw manifest first with timestamp to bypass CDN caching
+      try {
+        const rawRes = await fetch(`${RAW_BASE_URL}/manifest.json?t=${Date.now()}`)
+        if (rawRes.ok) {
+          data = await rawRes.json()
         }
-        flat.sort((a, b) => a.file.localeCompare(b.file))
-        if (alive) {
-          setItems(flat)
-          setLoading(false)
-        }
-      })
-      .catch(() => {
+      } catch (_) {}
+
+            // 2. Fallback to jsDelivr CDN
+      if (!data) {
+        try {
+          const cdnRes = await fetch(CDN_BASE_URL + "/manifest.json");
+          if (cdnRes.ok) data = await cdnRes.json();
+        } catch (_) {}
+      }
+
+      // 3. Fallback to local bundled manifest
+      if (!data) {
+        try {
+          const localRes = await fetch("/manifest.json");
+          if (localRes.ok) data = await localRes.json();
+        } catch (_) {}
+      }
+
+      if (!data || !alive) {
         if (alive) setLoading(false)
-      })
+        return
+      }
+
+      const flat = []
+      for (const entry of data) {
+        const files = entry.files && entry.files.length ? entry.files : []
+        const category =
+          entry.category ||
+          (files[0] && files[0].includes('/') ? files[0].split('/')[0] : 'general')
+
+        for (const file of files) {
+          flat.push({
+            name: entry.name || entry.shortname || file.replace(/\.svg$/i, ''),
+            shortname: entry.shortname || '',
+            category,
+            url: entry.url || '',
+            file,
+          })
+        }
+      }
+
+      flat.sort((a, b) => a.name.localeCompare(b.name))
+      if (alive) {
+        setItems(flat)
+        setLoading(false)
+      }
+    }
+
+    loadManifest()
+
     return () => {
       alive = false
     }
@@ -56,17 +106,55 @@ export default function LogoLibrary({ onBack }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [active])
 
+  // Smart multi-token, category & alias aware search
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return items
-    return items.filter(
-      (it) =>
-        it.file.toLowerCase().includes(q) ||
-        it.name.toLowerCase().includes(q) ||
-        it.shortname.toLowerCase().includes(q) ||
-        (it.category && it.category.toLowerCase().includes(q)),
-    )
+    const rawQ = query.trim().toLowerCase()
+    if (!rawQ) return items
+
+    const tokens = rawQ.split(/[\s_-]+/).filter(Boolean)
+
+    return items.filter((it) => {
+      const name = (it.name || '').toLowerCase()
+      const shortname = (it.shortname || '').toLowerCase()
+      const file = (it.file || '').toLowerCase()
+      const category = (it.category || '').toLowerCase()
+
+      const haystack = `${name} ${shortname} ${file} ${category}`
+      const cleanHaystack = haystack.replace(/[-_.]/g, ' ')
+
+      return tokens.every((token) => {
+        if (haystack.includes(token) || cleanHaystack.includes(token)) return true
+
+        const aliases = ALIAS_MAP[token]
+        if (aliases && aliases.some((a) => haystack.includes(a) || cleanHaystack.includes(a))) {
+          return true
+        }
+
+        for (const [key, list] of Object.entries(ALIAS_MAP)) {
+          if (list.includes(token) && (haystack.includes(key) || cleanHaystack.includes(key))) {
+            return true
+          }
+        }
+
+        return false
+      })
+    })
   }, [items, query])
+
+  // Dynamic rounded stats (rounded down to nearest 100: e.g. 1900+, 1400+)
+  const stats = useMemo(() => {
+    const rawTotal = items.length || 1965
+    const roundedSvgs = Math.floor(rawTotal / 100) * 100
+    const rawBrands = new Set(items.map((i) => i.shortname || i.name)).size || 1483
+    const roundedBrands = Math.floor(rawBrands / 100) * 100
+
+    return [
+      { value: roundedSvgs, suffix: '+', label: 'Brand SVGs' },
+      { value: roundedBrands, suffix: '+', label: 'Curated brands' },
+      { value: 100, suffix: '%', label: 'Free to use' },
+      { value: 0, label: 'Sign-up required' },
+    ]
+  }, [items])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const validCurrentPage = Math.min(Math.max(1, currentPage), totalPages)
@@ -97,7 +185,8 @@ export default function LogoLibrary({ onBack }) {
 
   const copyCode = async (it) => {
     try {
-      const res = await fetch(fileUrl(it.file))
+      let res = await fetch(fileUrl(it.file))
+      if (!res.ok) res = await fetch(rawFileUrl(it.file))
       const text = await res.text()
       await navigator.clipboard.writeText(text)
       setCopied(it.file)
@@ -109,7 +198,7 @@ export default function LogoLibrary({ onBack }) {
 
   const download = (it) => {
     const a = document.createElement('a')
-    a.href = fileUrl(it.file)
+    a.href = failedImages[it.file] ? rawFileUrl(it.file) : fileUrl(it.file)
     a.download = it.file.split("/").pop()
     document.body.appendChild(a)
     a.click()
@@ -120,10 +209,11 @@ export default function LogoLibrary({ onBack }) {
     setActive(it)
     setActiveCode('')
     try {
-      const res = await fetch(fileUrl(it.file))
+      let res = await fetch(fileUrl(it.file))
+      if (!res.ok) res = await fetch(rawFileUrl(it.file))
       setActiveCode(await res.text())
     } catch {
-      setActiveCode('')
+      setActiveCode('Failed to load SVG source.')
     }
   }
 
@@ -145,7 +235,7 @@ export default function LogoLibrary({ onBack }) {
           </Reveal>
           <Reveal delay={70}>
             <h1 className="section-title heading-display">
-              {items.length ? items.length.toLocaleString() : '1,960+'} Official Brand Vectors
+              {items.length ? `${Math.floor(items.length / 100) * 100}+` : '1,900+'} Official Brand Vectors
             </h1>
           </Reveal>
           <Reveal delay={130}>
@@ -156,9 +246,9 @@ export default function LogoLibrary({ onBack }) {
           </Reveal>
         </div>
 
-        <Reveal delay={160}>
-          <div className="lib-stats">
-            {LIBRARY_STATS.map((s) => (
+        <Reveal delay={150}>
+          <div className="lib-stats-strip">
+            {stats.map((s) => (
               <div className="lib-stat" key={s.label}>
                 <div className="lib-stat-value">
                   {s.value}
@@ -177,7 +267,7 @@ export default function LogoLibrary({ onBack }) {
               <input
                 className="search-input"
                 type="search"
-                placeholder="Search brand by name..."
+                placeholder="Search brand by name, e.g. Amazon, Myntra, Zomato..."
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value)
@@ -225,7 +315,9 @@ export default function LogoLibrary({ onBack }) {
           <>
             <div className="lib-grid">
               {shown.map((it) => {
-                const isFailed = failedImages[it.file]
+                const isFailed = failedImages[it.file] === 'failed'
+                const currentImgSrc = failedImages[it.file] === 'raw' ? rawFileUrl(it.file) : fileUrl(it.file)
+
                 return (
                   <div className="lib-card" key={it.file}>
                     <button
@@ -240,13 +332,18 @@ export default function LogoLibrary({ onBack }) {
                         </div>
                       ) : (
                         <img
-                          src={fileUrl(it.file)}
+                          src={currentImgSrc}
                           alt={it.name}
                           loading="lazy"
                           decoding="async"
-                          onError={() =>
-                            setFailedImages((prev) => ({ ...prev, [it.file]: true }))
-                          }
+                          onError={() => {
+                            setFailedImages((prev) => {
+                              if (!prev[it.file]) {
+                                return { ...prev, [it.file]: 'raw' }
+                              }
+                              return { ...prev, [it.file]: 'failed' }
+                            })
+                          }}
                         />
                       )}
                     </button>
@@ -352,7 +449,10 @@ export default function LogoLibrary({ onBack }) {
             </div>
 
             <div className="modal-preview">
-              <img src={fileUrl(active.file)} alt={active.name} />
+              <img
+                src={failedImages[active.file] === 'raw' ? rawFileUrl(active.file) : fileUrl(active.file)}
+                alt={active.name}
+              />
             </div>
 
             <div className="lib-modal-actions">

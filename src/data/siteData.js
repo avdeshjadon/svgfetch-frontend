@@ -400,8 +400,8 @@ export const FAQS = [
 ]
 
 export const LIBRARY_STATS = [
-  { value: 1960, suffix: '+', label: 'Brand SVGs' },
-  { value: 1450, suffix: '+', label: 'Curated brands' },
+  { value: 1900, suffix: '+', label: 'Brand SVGs' },
+  { value: 1400, suffix: '+', label: 'Curated brands' },
   { value: 100, suffix: '%', label: 'Free to use' },
   { value: 0, label: 'Sign-up required' },
 ]
