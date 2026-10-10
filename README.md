@@ -1,51 +1,39 @@
 <div align="center">
 
   <a href="https://github.com/avdeshjadon/svgfetch-frontend">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/avdeshjadon/svgfetch-frontend/main/public/full_logo_dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/avdeshjadon/svgfetch-frontend/main/public/full_logo.svg">
-      <img src="https://raw.githubusercontent.com/avdeshjadon/svgfetch-frontend/main/public/full_logo.svg" alt="svgfetch Logo" width="380" />
-    </picture>
+    <img src="public/full_logo_dark.svg" alt="svgfetch Logo" width="380" />
   </a>
 
-  <p><strong>⚡ Official web app, interactive logo playground & docs for <a href="https://github.com/avdeshjadon/svgfetch">svgfetch</a></strong></p>
-
-  <p>
-    <a href="https://github.com/avdeshjadon/svgfetch-frontend/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License" /></a>
-    <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=white" alt="React 19" /></a>
-    <a href="https://vite.dev/"><img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" /></a>
-    <a href="https://oxc.rs/"><img src="https://img.shields.io/badge/Linter-oxlint-orange?style=flat-square" alt="Oxlint" /></a>
-    <a href="https://github.com/avdeshjadon/svgfetch"><img src="https://img.shields.io/badge/CLI-svgfetch-DEA584?style=flat-square&logo=rust&logoColor=white" alt="Companion CLI" /></a>
-  </p>
+  <p><strong>Official web app, interactive logo playground & docs for <a href="https://github.com/avdeshjadon/svgfetch">svgfetch</a></strong></p>
 
 </div>
 
 ---
 
-## 📖 Overview
+## Overview
 
 **`svgfetch-frontend`** is the official web application, interactive playground, and documentation portal for [**svgfetch**](https://github.com/avdeshjadon/svgfetch) — the blazing-fast, pure-Rust CLI tool for finding, inspecting, and downloading official vector assets directly from Wikimedia Commons.
 
 This web portal allows developers and designers to:
-- 🔍 **Explore & Search Brands:** Search hundreds of official brand logos and icons with real-time vector previews.
-- 📋 **One-Click Commands & SVG Markup:** Copy ready-to-run `svgfetch` terminal commands or grab raw SVG code instantly.
-- 🖥️ **Interactive Terminal Demo:** Experience the command-line workflow directly inside the browser.
-- 📚 **Comprehensive Documentation:** Read full CLI guides, variant resolution rules, installation instructions, security details, and FAQs.
-- 🌓 **Theme-Aware:** Seamless toggle between sleek Dark Mode and clean Light Mode, with automatic system preference detection.
+- **Explore & Search Brands:** Search hundreds of official brand logos and icons with real-time vector previews.
+- **One-Click Commands & SVG Markup:** Copy ready-to-run `svgfetch` terminal commands or grab raw SVG code instantly.
+- **Interactive Terminal Demo:** Experience the command-line workflow directly inside the browser.
+- **Comprehensive Documentation:** Read full CLI guides, variant resolution rules, installation instructions, security details, and FAQs.
+- **Theme-Aware:** Seamless toggle between sleek Dark Mode and clean Light Mode, with automatic system preference detection.
 
 ---
 
-## ✨ Features
+## Features
 
-- **⚡ Instant Vector Library:** Filter by brand category (Tech, DevOps, Social, OS, Language) and variant (`icon`, `wordmark`, `mascot`, `lockup`).
-- **🎯 Exact Entity Matching:** Sourced directly from verified Wikimedia Commons entities without tracking or bloated wrappers.
-- **💻 Interactive Command Playground:** Simulate `svgfetch <brand> --variant <type>` queries and preview output formats before running them locally.
-- **🎨 Modern Design & Micro-animations:** Built with custom vanilla CSS tokens, glassmorphism cards, responsive marquee, and smooth layout transitions.
-- **⚡ Performance-First Stack:** Powered by **React 19** and **Vite 8** for sub-second build times and optimal bundle size.
+- **Instant Vector Library:** Filter by brand category (Tech, DevOps, Social, OS, Language) and variant (`icon`, `wordmark`, `mascot`, `lockup`).
+- **Exact Entity Matching:** Sourced directly from verified Wikimedia Commons entities without tracking or bloated wrappers.
+- **Interactive Command Playground:** Simulate `svgfetch <brand> --variant <type>` queries and preview output formats before running them locally.
+- **Modern Design & Micro-animations:** Built with custom vanilla CSS tokens, glassmorphism cards, responsive marquee, and smooth layout transitions.
+- **Performance-First Stack:** Powered by **React 19** and **Vite 8** for sub-second build times and optimal bundle size.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology | Purpose |
 | :--- | :--- |
@@ -57,7 +45,7 @@ This web portal allows developers and designers to:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -86,7 +74,7 @@ Visit [`http://localhost:5173`](http://localhost:5173) in your browser to view t
 
 ---
 
-## 📜 Available Scripts
+## Available Scripts
 
 | Command | Description |
 | :--- | :--- |
@@ -97,12 +85,13 @@ Visit [`http://localhost:5173`](http://localhost:5173) in your browser to view t
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 svgfetch-frontend/
 ├── public/                  # Static assets & brand vectors
-│   ├── full_logo.svg        # Brand logo with typography
+│   ├── full_logo.svg        # Brand logo with typography (light mode)
+│   ├── full_logo_dark.svg   # Brand logo with typography (dark mode)
 │   ├── logo.svg             # Brand icon mark
 │   ├── favicon.svg          # Favicon asset
 │   └── logos/               # Vector brand assets
@@ -131,7 +120,7 @@ svgfetch-frontend/
 
 ---
 
-## 🔌 Companion CLI Tool
+## Companion CLI Tool
 
 Want to use `svgfetch` from your terminal? You can install or run it via multiple package managers:
 
@@ -155,11 +144,11 @@ curl -fsSL https://raw.githubusercontent.com/avdeshjadon/svgfetch/main/install.s
 irm https://raw.githubusercontent.com/avdeshjadon/svgfetch/main/install.ps1 | iex
 ```
 
-👉 Check out the CLI repository: **[github.com/avdeshjadon/svgfetch](https://github.com/avdeshjadon/svgfetch)**
+Check out the CLI repository: **[github.com/avdeshjadon/svgfetch](https://github.com/avdeshjadon/svgfetch)**
 
 ---
 
-## 🏷️ GitHub Topics
+## GitHub Topics
 
 This repository is categorized under:
 - `developer-tools`
@@ -175,7 +164,7 @@ This repository is categorized under:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, issues, and feature requests are welcome!
 
@@ -187,12 +176,12 @@ Contributions, issues, and feature requests are welcome!
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE) (or corresponding project license). See repository for details.
 
 ---
 
 <div align="center">
-  Crafted with ❤️ for developers by <a href="https://github.com/avdeshjadon">Avdesh Jadon</a>
+  Crafted for developers by <a href="https://github.com/avdeshjadon">Avdesh Jadon</a>
 </div>
