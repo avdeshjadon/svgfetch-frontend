@@ -18,7 +18,7 @@ export default function LogoMarquee({ onSelectBrand }) {
               onClick={() => onSelectBrand && onSelectBrand(item.name)}
             >
               <img
-                src={`${CDN_LOGOS_URL}/${encodeURIComponent(item.file)}`}
+                src={`${CDN_LOGOS_URL}/${item.file.split("/").map(encodeURIComponent).join("/")}`}
                 alt={item.name}
                 className="marquee-logo"
                 loading="lazy"

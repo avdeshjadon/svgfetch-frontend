@@ -6,7 +6,7 @@ import Reveal from './Reveal'
 const PAGE_SIZE = 60
 
 const CDN_BASE_URL = "https://cdn.jsdelivr.net/gh/avdeshjadon/svgfetch-icons@main"
-const fileUrl = (file) => `${CDN_BASE_URL}/logos/${encodeURIComponent(file)}`
+const fileUrl = (file) => `${CDN_BASE_URL}/logos/${file.split("/").map(encodeURIComponent).join("/")}`
 
 export default function LogoLibrary({ onBack }) {
   const [items, setItems] = useState([])
@@ -63,7 +63,8 @@ export default function LogoLibrary({ onBack }) {
       (it) =>
         it.file.toLowerCase().includes(q) ||
         it.name.toLowerCase().includes(q) ||
-        it.shortname.toLowerCase().includes(q),
+        it.shortname.toLowerCase().includes(q) ||
+        (it.category && it.category.toLowerCase().includes(q)),
     )
   }, [items, query])
 
@@ -109,7 +110,7 @@ export default function LogoLibrary({ onBack }) {
   const download = (it) => {
     const a = document.createElement('a')
     a.href = fileUrl(it.file)
-    a.download = it.file
+    a.download = it.file.split("/").pop()
     document.body.appendChild(a)
     a.click()
     a.remove()
