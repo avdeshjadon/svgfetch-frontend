@@ -5,7 +5,8 @@ import Reveal from './Reveal'
 
 const PAGE_SIZE = 60
 
-const fileUrl = (file) => `/logos/${encodeURIComponent(file)}`
+const CDN_BASE_URL = "https://cdn.jsdelivr.net/gh/avdeshjadon/svgfetch-icons@main"
+const fileUrl = (file) => `${CDN_BASE_URL}/logos/${encodeURIComponent(file)}`
 
 export default function LogoLibrary({ onBack }) {
   const [items, setItems] = useState([])
@@ -19,7 +20,7 @@ export default function LogoLibrary({ onBack }) {
 
   useEffect(() => {
     let alive = true
-    fetch('/logos/manifest.json')
+    fetch(`${CDN_BASE_URL}/manifest.json`)
       .then((res) => res.json())
       .then((data) => {
         const flat = []

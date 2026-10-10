@@ -1,5 +1,7 @@
 import { MARQUEE_BRANDS } from '../data/siteData'
 
+const CDN_LOGOS_URL = 'https://cdn.jsdelivr.net/gh/avdeshjadon/svgfetch-icons@main/logos'
+
 export default function LogoMarquee({ onSelectBrand }) {
   const items = [...MARQUEE_BRANDS, ...MARQUEE_BRANDS]
 
@@ -16,7 +18,7 @@ export default function LogoMarquee({ onSelectBrand }) {
               onClick={() => onSelectBrand && onSelectBrand(item.name)}
             >
               <img
-                src={`/logos/${item.file}`}
+                src={`${CDN_LOGOS_URL}/${encodeURIComponent(item.file)}`}
                 alt={item.name}
                 className="marquee-logo"
                 loading="lazy"
