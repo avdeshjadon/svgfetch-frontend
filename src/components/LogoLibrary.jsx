@@ -494,24 +494,31 @@ export default function LogoLibrary({ onBack }) {
       {active && (
         <div className="modal-overlay" onClick={() => setActive(null)}>
           <div className="modal lib-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setActive(null)} aria-label="Close">
-              <X size={18} />
-            </button>
             <div className="lib-modal-head">
-              <div>
-                <h3 className="card-title">{active.name}</h3>
-                <span className="badge">{active.file}</span>
+              <div className="lib-modal-title-col">
+                <h3 className="card-title lib-modal-title">{active.name}</h3>
+                <span className="badge lib-modal-badge">{active.file}</span>
               </div>
-              {active.url && (
-                <a
-                  className="mini-btn"
-                  href={active.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <div className="lib-modal-nav-actions">
+                {active.url && (
+                  <a
+                    className="lib-modal-site-btn"
+                    href={active.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink size={13} />
+                    <span>Website</span>
+                  </a>
+                )}
+                <button
+                  className="lib-modal-close-btn"
+                  onClick={() => setActive(null)}
+                  aria-label="Close"
                 >
-                  <ExternalLink size={13} /> Website
-                </a>
-              )}
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
             <div className="modal-preview">
