@@ -289,20 +289,32 @@ export default function LogoLibrary({ onBack }) {
               )}
             </div>
 
-            <div className="search-tags">
-              <span className="search-tags-label">Popular:</span>
-              {['Amazon', 'Myntra', 'Zomato', 'Google', 'Microsoft', 'Docker', 'React', 'Rust'].map((tag) => (
-                <button
-                  key={tag}
-                  className={`search-tag-chip ${query.toLowerCase() === tag.toLowerCase() ? 'active' : ''}`}
-                  onClick={() => {
-                    setQuery(query.toLowerCase() === tag.toLowerCase() ? '' : tag)
-                    setCurrentPage(1)
-                  }}
-                >
-                  {tag}
-                </button>
-              ))}
+            <div className="search-tags" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
+                <span className="search-tags-label">Popular:</span>
+                {['Amazon', 'Myntra', 'Zomato', 'Google', 'Microsoft', 'Docker', 'React', 'Rust'].map((tag) => (
+                  <button
+                    key={tag}
+                    className={`search-tag-chip ${query.toLowerCase() === tag.toLowerCase() ? 'active' : ''}`}
+                    onClick={() => {
+                      setQuery(query.toLowerCase() === tag.toLowerCase() ? '' : tag)
+                      setCurrentPage(1)
+                    }}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+              <a
+                href="https://github.com/avdeshjadon/svgfetch-icons/issues/new?template=curate-brand.yml"
+                target="_blank"
+                rel="noreferrer"
+                style={{ fontSize: "0.82rem", color: "var(--faint)", display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
+                title="Request a brand to be auto-curated by our CI"
+              >
+                <span>+ Request Brand</span>
+                <ExternalLink size={12} />
+              </a>
             </div>
           </div>
         </Reveal>
@@ -316,16 +328,33 @@ export default function LogoLibrary({ onBack }) {
         ) : filtered.length === 0 ? (
           <div className="empty">
             <p>No logos found matching “{query}”.</p>
-            <button
-              className="btn btn-ghost"
-              onClick={() => {
-                setQuery('')
-                setCurrentPage(1)
-              }}
-              style={{ marginTop: 14 }}
-            >
-              Clear search
-            </button>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginTop: 14 }}>
+              <button
+                className="btn btn-ghost"
+                onClick={() => {
+                  setQuery('')
+                  setCurrentPage(1)
+                }}
+              >
+                Clear search
+              </button>
+              {query && (
+                <a
+                  className="btn btn-primary"
+                  href={`https://github.com/avdeshjadon/svgfetch-icons/issues/new?template=curate-brand.yml&title=%5Bcurate%5D%3A+${encodeURIComponent(query)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  <ExternalLink size={14} /> Request “{query}”
+                </a>
+              )}
+            </div>
+            {query && (
+              <p style={{ marginTop: 12, fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                Missing from the registry? Our autonomous CI engine can fetch and validate it automatically.
+              </p>
+            )}
           </div>
         ) : (
           <>
