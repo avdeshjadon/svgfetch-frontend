@@ -6474,6 +6474,15 @@
     ]
   },
   {
+    "name": "Jio",
+    "shortname": "jio",
+    "category": "general",
+    "url": "",
+    "files": [
+      "general/jio.svg"
+    ]
+  },
+  {
     "name": "JIRA",
     "shortname": "jira",
     "category": "tools",
@@ -13724,6 +13733,15 @@
     "url": "https://zeplin.io/",
     "files": [
       "design/zeplin.svg"
+    ]
+  },
+  {
+    "name": "Zepto",
+    "shortname": "zepto",
+    "category": "e-commerce",
+    "url": "",
+    "files": [
+      "e-commerce/zepto.svg"
     ]
   },
   {

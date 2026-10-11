@@ -38,27 +38,46 @@ export default function LogoLibrary({ onBack }) {
     const loadManifest = async () => {
       let data = null
 
-      // 1. Try real-time GitHub raw manifest first with timestamp to bypass CDN caching
-      try {
-        const rawRes = await fetch(`${RAW_BASE_URL}/manifest.json?t=${Date.now()}`)
-        if (rawRes.ok) {
-          data = await rawRes.json()
-        }
-      } catch (_) {}
+      // Fetch both real-time sources (local dev manifest & GitHub raw) with cache-busting
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1" ||
+          window.location.hostname.endsWith(".local"));
 
-            // 2. Fallback to jsDelivr CDN
+      const promises = [
+        fetch(`${RAW_BASE_URL}/manifest.json?t=${Date.now()}`, { cache: "no-store" })
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null),
+      ];
+
+      if (isLocal) {
+        promises.push(
+          fetch(`/manifest.json?t=${Date.now()}`, { cache: "no-store" })
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null)
+        );
+      }
+
+      const results = await Promise.all(promises);
+      // Pick the dataset with the most icons (ensures zero lag when new brands are added)
+      for (const res of results) {
+        if (Array.isArray(res) && (!data || res.length > data.length)) {
+          data = res;
+        }
+      }
+
+      // Fallbacks if both above fail
+      if (!data) {
+        try {
+          const localRes = await fetch(`/manifest.json?t=${Date.now()}`, { cache: "no-store" });
+          if (localRes.ok) data = await localRes.json();
+        } catch (_) {}
+      }
       if (!data) {
         try {
           const cdnRes = await fetch(CDN_BASE_URL + "/manifest.json");
           if (cdnRes.ok) data = await cdnRes.json();
-        } catch (_) {}
-      }
-
-      // 3. Fallback to local bundled manifest
-      if (!data) {
-        try {
-          const localRes = await fetch("/manifest.json");
-          if (localRes.ok) data = await localRes.json();
         } catch (_) {}
       }
 
