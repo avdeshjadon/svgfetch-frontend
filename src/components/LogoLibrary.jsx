@@ -87,6 +87,7 @@ export default function LogoLibrary({ onBack }) {
       }
 
       const flat = []
+      const seenFiles = new Set()
       for (const entry of data) {
         const files = entry.files && entry.files.length ? entry.files : []
         const category =
@@ -94,6 +95,8 @@ export default function LogoLibrary({ onBack }) {
           (files[0] && files[0].includes('/') ? files[0].split('/')[0] : 'general')
 
         for (const file of files) {
+          if (!file || seenFiles.has(file)) continue
+          seenFiles.add(file)
           flat.push({
             name: entry.name || entry.shortname || file.replace(/\.svg$/i, ''),
             shortname: entry.shortname || '',
@@ -351,12 +354,12 @@ export default function LogoLibrary({ onBack }) {
         ) : (
           <>
             <div className="lib-grid">
-              {shown.map((it) => {
+              {shown.map((it, idx) => {
                 const isFailed = failedImages[it.file] === 'failed'
                 const currentImgSrc = failedImages[it.file] === 'raw' ? rawFileUrl(it.file) : fileUrl(it.file)
 
                 return (
-                  <div className="lib-card" key={it.file}>
+                  <div className="lib-card" key={`${it.category}-${it.shortname || it.name}-${it.file}-${startIndex + idx}`}>
                     <button
                       className="lib-thumb"
                       onClick={() => openItem(it)}
