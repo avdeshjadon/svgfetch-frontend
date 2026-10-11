@@ -9,6 +9,41 @@ const RAW_BASE_URL = "https://raw.githubusercontent.com/avdeshjadon/svgfetch-ico
 const fileUrl = (file) => `${CDN_BASE_URL}/logos/${file.split("/").map(encodeURIComponent).join("/")}`
 const rawFileUrl = (file) => `${RAW_BASE_URL}/logos/${file.split("/").map(encodeURIComponent).join("/")}`
 
+export function getVariantDisplayName(brandName, shortname, filePath) {
+  if (!filePath) return brandName || ''
+  const leaf = filePath.split('/').pop().replace(/\.svg$/i, '')
+  
+  const variantRules = [
+    { regex: /[-_]icon$/i, label: 'Icon' },
+    { regex: /[-_]wordmark$/i, label: 'Wordmark' },
+    { regex: /[-_]symbol$/i, label: 'Symbol' },
+    { regex: /[-_]dark$/i, label: 'Dark' },
+    { regex: /[-_]light$/i, label: 'Light' },
+    { regex: /[-_]white$/i, label: 'White' },
+    { regex: /[-_]black$/i, label: 'Black' },
+    { regex: /[-_]monochrome$/i, label: 'Monochrome' },
+    { regex: /[-_]color$/i, label: 'Color' },
+    { regex: /[-_]colour$/i, label: 'Color' },
+    { regex: /[-_]tile$/i, label: 'Tile' },
+    { regex: /[-_]digital$/i, label: 'Digital' },
+    { regex: /[-_]badge$/i, label: 'Badge' },
+    { regex: /[-_]logo$/i, label: 'Logo' },
+  ]
+
+  for (const rule of variantRules) {
+    if (rule.regex.test(leaf)) {
+      const labelLower = rule.label.toLowerCase()
+      const words = (brandName || '').toLowerCase().split(/\s+/)
+      if (!words.includes(labelLower)) {
+        return `${brandName} ${rule.label}`
+      }
+      return brandName
+    }
+  }
+
+  return brandName || leaf
+}
+
 // Aliases and synonym mappings for brand search
 const ALIAS_MAP = {
   amazon: ['aws', 'amzn', 'dynamodb', 'ec2', 's3', 'lambda', 'elastic', 'chime'],
@@ -98,7 +133,7 @@ export default function LogoLibrary({ onBack }) {
           if (!file || seenFiles.has(file)) continue
           seenFiles.add(file)
           flat.push({
-            name: entry.name || entry.shortname || file.replace(/\.svg$/i, ''),
+            name: getVariantDisplayName(entry.name || entry.shortname, entry.shortname, file),
             shortname: entry.shortname || '',
             category,
             url: entry.url || '',
