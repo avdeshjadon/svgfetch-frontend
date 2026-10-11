@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Search, Copy, Check, Download, X, ExternalLink, Code, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, Copy, Check, Download, X, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
 import Reveal from './Reveal'
 
 const PAGE_SIZE = 60
@@ -64,7 +64,6 @@ export default function LogoLibrary({ onBack }) {
   const [currentPage, setCurrentPage] = useState(1)
   const [copied, setCopied] = useState('')
   const [active, setActive] = useState(null)
-  const [activeCode, setActiveCode] = useState('')
   const [failedImages, setFailedImages] = useState({})
 
   useEffect(() => {
@@ -262,16 +261,8 @@ export default function LogoLibrary({ onBack }) {
     a.remove()
   }
 
-  const openItem = async (it) => {
+  const openItem = (it) => {
     setActive(it)
-    setActiveCode('')
-    try {
-      let res = await fetch(fileUrl(it.file))
-      if (!res.ok) res = await fetch(rawFileUrl(it.file))
-      setActiveCode(await res.text())
-    } catch {
-      setActiveCode('Failed to load SVG source.')
-    }
   }
 
   return (
@@ -542,12 +533,6 @@ export default function LogoLibrary({ onBack }) {
                 <Download size={15} /> Download SVG
               </button>
             </div>
-
-            <div className="lib-code-head">
-              <Code size={14} />
-              <span>SVG source</span>
-            </div>
-            <pre className="lib-code">{activeCode || 'Loading source…'}</pre>
           </div>
         </div>
       )}
