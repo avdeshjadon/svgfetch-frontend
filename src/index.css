@@ -893,7 +893,6 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
   margin: 0 auto 36px auto;
   max-width: 760px;
   width: 100%;
@@ -906,23 +905,49 @@ button {
 
 .lib-toolbar .search-input {
   width: 100%;
-  height: 54px;
-  padding: 14px 44px 14px 48px;
-  font-size: 1rem;
+  height: 56px;
+  padding: 14px 48px 14px 50px;
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--glass-border-strong);
   background: var(--glass-bg-card);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
   color: var(--ink);
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none !important;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-.lib-toolbar .search-input:focus {
-  border-color: var(--primary, #3b82f6);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
-  outline: none;
+.lib-toolbar .search-input::-webkit-search-cancel-button,
+.lib-toolbar .search-input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  display: none;
+}
+
+.lib-toolbar .search-input:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.06);
+}
+
+.lib-toolbar .search-input:focus,
+.lib-toolbar .search-input:focus-visible {
+  border-color: var(--ink, #18181b) !important;
+  box-shadow: 0 0 0 1px var(--ink, #18181b), 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+  outline: none !important;
+  background: #ffffff;
+}
+
+[data-theme="dark"] .lib-toolbar .search-input:focus,
+[data-theme="dark"] .lib-toolbar .search-input:focus-visible {
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35), 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+  outline: none !important;
+  background: rgba(22, 22, 28, 0.95) !important;
+  color: var(--ink) !important;
 }
 
 .lib-toolbar .search-ico {
@@ -930,8 +955,13 @@ button {
   left: 18px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--muted);
+  color: var(--faint);
   pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.lib-toolbar .search-wrap:focus-within .search-ico {
+  color: var(--ink);
 }
 
 .search-tags {

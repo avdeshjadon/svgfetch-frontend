@@ -289,33 +289,6 @@ export default function LogoLibrary({ onBack }) {
               )}
             </div>
 
-            <div className="search-tags" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
-                <span className="search-tags-label">Popular:</span>
-                {['Amazon', 'Myntra', 'Zomato', 'Google', 'Microsoft', 'Docker', 'React', 'Rust'].map((tag) => (
-                  <button
-                    key={tag}
-                    className={`search-tag-chip ${query.toLowerCase() === tag.toLowerCase() ? 'active' : ''}`}
-                    onClick={() => {
-                      setQuery(query.toLowerCase() === tag.toLowerCase() ? '' : tag)
-                      setCurrentPage(1)
-                    }}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-              <a
-                href="https://github.com/avdeshjadon/svgfetch-icons/issues/new?template=curate-brand.yml"
-                target="_blank"
-                rel="noreferrer"
-                style={{ fontSize: "0.82rem", color: "var(--faint)", display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
-                title="Request a brand to be auto-curated by our CI"
-              >
-                <span>+ Request Brand</span>
-                <ExternalLink size={12} />
-              </a>
-            </div>
           </div>
         </Reveal>
 
